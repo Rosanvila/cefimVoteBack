@@ -3,12 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\SessionsRepository;
+use App\Repository\SessionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: SessionsRepository::class)]
+#[ORM\Entity(repositoryClass: SessionRepository::class)]
 #[ApiResource]
-class Sessions
+class Session
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
