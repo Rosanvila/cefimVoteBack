@@ -13,7 +13,7 @@ use App\Repository\UserRepository;
 
 class UserController extends AbstractController
 {
-    #[Route('/user', name: 'app_user', methods: ['POST'])]
+    #[Route('/api/user', name: 'app_user', methods: ['POST'])]
     public function index(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
