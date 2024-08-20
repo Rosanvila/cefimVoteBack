@@ -31,7 +31,7 @@ class User
     private ?bool $suppleant = null;
 
     #[ORM\ManyToOne(inversedBy: 'SessionUsers')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Session $UsersSession = null;
 
     public function getId(): ?int

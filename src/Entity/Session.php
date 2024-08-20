@@ -33,11 +33,11 @@ class Session
     private ?\DateTimeInterface $date = null;
 
     #[ORM\ManyToOne(inversedBy: 'AdminSession')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Admin $SessionAdmin = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Result $SessionResult = null;
 
     /**
