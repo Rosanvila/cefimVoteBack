@@ -21,6 +21,15 @@ class Session
     #[ORM\Column(length: 255)]
     private ?string $promotion = null;
 
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $heureDebut = null;
+
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $heureFin = null;
+
+    #[ORM\Column(type: 'date')]
+    private ?\DateTimeInterface $date = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +55,42 @@ class Session
     public function setPromotion(string $promotion): static
     {
         $this->promotion = $promotion;
+
+        return $this;
+    }
+
+    public function getHeureDebut(): ?\DateTimeInterface
+    {
+        return $this->heureDebut;
+    }
+
+    public function setHeureDebut(\DateTimeInterface $heureDebut): static
+    {
+        $this->heureDebut = $heureDebut;
+
+        return $this;
+    }
+
+    public function getHeureFin(): ?\DateTimeInterface
+    {
+        return $this->heureFin;
+    }
+
+    public function setHeureFin(\DateTimeInterface $heureFin): static
+    {
+        $this->heureFin = $heureFin;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): static
+    {
+        $this->date = $date;
 
         return $this;
     }

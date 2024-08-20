@@ -25,6 +25,7 @@ class AdminController extends AbstractController
 
         $user = new Admin();
         $user->setName($data['name']);
+        $user->setPassword($data['password']);
         $user->setEmail($data['email']);
         $user->setSignature($data['signature']);
 
