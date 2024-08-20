@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class SessionController extends AbstractController
 {
-    #[Route('/session', name: 'app_session')]
+    #[Route('/api/session', name: 'app_session')]
     public function index(): Response
     {
         return $this->render('session/index.html.twig', [

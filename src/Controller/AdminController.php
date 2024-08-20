@@ -10,10 +10,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AdminController extends AbstractController
 {
-    #[Route('/admin', name: 'app_admin', methods: ['POST'])]
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
+    #[Route('/api/admin', name: 'app_admin', methods: ['POST'])]
     public function index(Request $request, AdminRepository $adminRepository, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -25,9 +33,11 @@ class AdminController extends AbstractController
 
         $user = new Admin();
         $user->setName($data['name']);
-        $user->setPassword($data['password']);
         $user->setEmail($data['email']);
         $user->setSignature($data['signature']);
+
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $data['password']);
+        $user->setPassword($hashedPassword);
 
         $entityManager->persist($user);
         $entityManager->flush();
