@@ -30,6 +30,10 @@ class User
     #[ORM\Column(nullable: true)]
     private ?bool $suppleant = null;
 
+    #[ORM\ManyToOne(inversedBy: 'SessionUsers')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Session $UsersSession = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +95,18 @@ class User
     public function setSuppleant(?bool $suppleant): static
     {
         $this->suppleant = $suppleant;
+
+        return $this;
+    }
+
+    public function getUsersSession(): ?Session
+    {
+        return $this->UsersSession;
+    }
+
+    public function setUsersSession(?Session $UsersSession): static
+    {
+        $this->UsersSession = $UsersSession;
 
         return $this;
     }

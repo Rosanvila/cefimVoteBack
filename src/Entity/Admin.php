@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\AdminRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AdminRepository::class)]
@@ -26,6 +28,17 @@ class Admin implements \Symfony\Component\Security\Core\User\PasswordAuthenticat
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, Session>
+     */
+    #[ORM\OneToMany(targetEntity: Session::class, mappedBy: 'SessionAdmin')]
+    private Collection $AdminSession;
+
+    public function __construct()
+    {
+        $this->AdminSession = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -76,6 +89,36 @@ class Admin implements \Symfony\Component\Security\Core\User\PasswordAuthenticat
     public function setPassword(?string $password): void
     {
         $this->password = $password;
+    }
+
+    /**
+     * @return Collection<int, Session>
+     */
+    public function getAdminSession(): Collection
+    {
+        return $this->AdminSession;
+    }
+
+    public function addAdminSession(Session $adminSession): static
+    {
+        if (!$this->AdminSession->contains($adminSession)) {
+            $this->AdminSession->add($adminSession);
+            $adminSession->setSessionAdmin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdminSession(Session $adminSession): static
+    {
+        if ($this->AdminSession->removeElement($adminSession)) {
+            // set the owning side to null (unless already changed)
+            if ($adminSession->getSessionAdmin() === $this) {
+                $adminSession->setSessionAdmin(null);
+            }
+        }
+
+        return $this;
     }
 
 }
