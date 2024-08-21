@@ -56,6 +56,7 @@ class Session
     #[groups(['session:read', 'session:write'])]
     private ?\DateTimeInterface $heureDebut = null;
 
+
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $heureFin = null;
 
@@ -88,6 +89,7 @@ class Session
     public function __construct()
     {
         $this->SessionUsers = new ArrayCollection();
+        $this->heureFin = new \DateTime();
     }
 
     public function getId(): ?int

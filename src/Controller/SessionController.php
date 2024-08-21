@@ -34,8 +34,8 @@ class SessionController extends AbstractController
             'id' => $session->getId(),
             'codesession' => $session->getCodesession(),
             'promotion' => $session->getPromotion(),
-            'heureDebut' => $session->getHeureDebut()->format('Y-m-d H:i:s'),
-            'heureFin' => $session->getHeureFin()->format('Y-m-d H:i:s'),
+            'heureDebut' => $session->getHeureDebut()->format('d-m-Y'),
+            'heureFin' => $session->getHeureFin()->format('d-m-Y'),
             'date' => $session->getDate()->format('Y-m-d'),
         ]);
     }
