@@ -25,6 +25,11 @@ class UserController extends AbstractController
 
     public function __invoke(Request $request): Response
     {
+        $contentType = $request->headers->get('Content-Type');
+        if ($contentType !== 'application/ld+json' && $contentType !== 'application/json') {
+            return new JsonResponse(['message' => 'Unsupported content type'], Response::HTTP_UNSUPPORTED_MEDIA_TYPE);
+        }
+
         $data = json_decode($request->getContent(), true);
         $nom = $data['nom'] ?? null;
         $prenom = $data['prenom'] ?? null;
@@ -51,6 +56,8 @@ class UserController extends AbstractController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return new JsonResponse(['message' => 'Nouvel utilisateur créé', 'user' => $user->getNom() . ' ' . $user->getPrenom()], Response::HTTP_CREATED);
+        $response = new JsonResponse(['message' => 'Nouvel utilisateur créé', 'user' => $user->getNom() . ' ' . $user->getPrenom()], Response::HTTP_CREATED);
+        $response->headers->set('Content-Type', 'application/ld+json');
+        return $response;
     }
 }

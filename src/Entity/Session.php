@@ -14,6 +14,7 @@ use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
 #[ApiResource(
@@ -27,30 +28,39 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new GetCollection(),
         new Delete(),
-        new Post(),
+        new Post(
+            normalizationContext: ['groups' => ['session:read']],
+            denormalizationContext: ['groups' => ['session:write']]
+        ),
         new Patch(),
-        New Put(),]
+        New Put(),
+        ],
 )]
 class Session
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[groups(['session:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[groups(['session:read', 'session:write'])]
     private ?string $codesession = null;
 
     #[ORM\Column(length: 255)]
+    #[groups(['session:read', 'session:write'])]
     private ?string $promotion = null;
 
     #[ORM\Column(type: 'datetime')]
+    #[groups(['session:read', 'session:write'])]
     private ?\DateTimeInterface $heureDebut = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $heureFin = null;
 
     #[ORM\Column(type: 'date')]
+    #[groups(['session:read', 'session:write'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\ManyToOne(inversedBy: 'AdminSession')]
@@ -66,6 +76,14 @@ class Session
      */
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'UsersSession')]
     private Collection $SessionUsers;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[groups(['session:read', 'session:write'])]
+    private ?string $responsible = null;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[groups(['session:read', 'session:write'])]
+    private ?string $signature = null;
 
     public function __construct()
     {
@@ -190,4 +208,25 @@ class Session
 
         return $this;
     }
+
+    public function getSignature(): ?string
+    {
+        return $this->signature;
+    }
+
+    public function setSignature(?string $signature): void
+    {
+        $this->signature = $signature;
+    }
+
+    public function getResponsible(): ?string
+    {
+        return $this->responsible;
+    }
+
+    public function setResponsible(?string $responsible): void
+    {
+        $this->responsible = $responsible;
+    }
+
 }
