@@ -6,10 +6,20 @@ use App\Repository\SessionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[AsController]
 class SessionController extends AbstractController
 {
+    /*    #[Route('/api/session', name: 'app_session')]
+        public function index(): Response
+        {
+            return $this->render('session/index.html.twig', [
+                'controller_name' => 'SessionController',
+            ]);
+        }*/
+
     private SessionRepository $sessionRepository;
 
     public function __construct(SessionRepository $sessionRepository)
@@ -17,16 +27,7 @@ class SessionController extends AbstractController
         $this->sessionRepository = $sessionRepository;
     }
 
-    #[Route('/api/session', name: 'app_session')]
-    public function index(): Response
-    {
-        return $this->render('session/index.html.twig', [
-            'controller_name' => 'SessionController',
-        ]);
-    }
-
-    #[Route('/api/session/{codesession}', name: 'app_session_code', methods: ['GET'])]
-    public function sessionCode(string $codesession): Response
+    public function __invoke(string $codesession): Response
     {
         $session = $this->sessionRepository->findOneBy(['codesession' => $codesession]);
 
@@ -43,6 +44,5 @@ class SessionController extends AbstractController
             'date' => $session->getDate()->format('Y-m-d'),
         ]);
     }
+
 }
-
-

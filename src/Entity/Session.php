@@ -3,13 +3,34 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Controller\SessionController;
 use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/sessions/{codesession}',
+            uriVariables: ['codesession'],
+            controller: SessionController::class,
+            read: false,
+            name: 'get_session_code'
+        ),
+        new GetCollection(),
+        new Delete(),
+        new Post(),
+        new Patch(),
+        New Put(),]
+)]
 class Session
 {
     #[ORM\Id]
