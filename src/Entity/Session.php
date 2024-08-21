@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/sessions/{codesession}',
+            uriTemplate: '/session/{codesession}',
             uriVariables: ['codesession'],
             controller: SessionController::class,
             read: false,
@@ -56,7 +56,7 @@ class Session
     #[groups(['session:read', 'session:write'])]
     private ?\DateTimeInterface $heureDebut = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $heureFin = null;
 
     #[ORM\Column(type: 'date')]

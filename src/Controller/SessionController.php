@@ -7,19 +7,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
 class SessionController extends AbstractController
 {
-    /*    #[Route('/api/session', name: 'app_session')]
-        public function index(): Response
-        {
-            return $this->render('session/index.html.twig', [
-                'controller_name' => 'SessionController',
-            ]);
-        }*/
-
     private SessionRepository $sessionRepository;
 
     public function __construct(SessionRepository $sessionRepository)
@@ -35,6 +26,10 @@ class SessionController extends AbstractController
             return new JsonResponse(['message' => 'Session not found'], Response::HTTP_NOT_FOUND);
         }
 
+        if (!$session->getHeureDebut() || !$session->getHeureFin() || !$session->getDate()) {
+            return new JsonResponse(['message' => 'Session data is incomplete'], Response::HTTP_BAD_REQUEST);
+        }
+
         return new JsonResponse([
             'id' => $session->getId(),
             'codesession' => $session->getCodesession(),
@@ -44,5 +39,4 @@ class SessionController extends AbstractController
             'date' => $session->getDate()->format('Y-m-d'),
         ]);
     }
-
 }
