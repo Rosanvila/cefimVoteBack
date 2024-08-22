@@ -17,7 +17,7 @@ function getLocalIpAddress() {
 const ipAddress = getLocalIpAddress();
 const port = 8080;
 
-const server = new WebSocket.Server({port: port}, () => {
+const server = new WebSocket.Server({ port: port }, () => {
     console.log(`WebSocket server started on ws://${ipAddress}:${port}`);
 });
 
@@ -27,10 +27,25 @@ server.on('connection', (socket, req) => {
 
     socket.on('message', (message) => {
         console.log(`Received message from ${clientIp}: ${message}`);
-        // Broadcast the message to all connected clients
+        let jsonResponse;
+        try {
+            const jsonMessage = JSON.parse(message);
+            // Modify or create a new JSON object to send back
+            jsonResponse = {
+                status: 'success',
+                received: jsonMessage,
+                echo: 'Echo: ' + jsonMessage
+            };
+        } catch (error) {
+            jsonResponse = {
+                status: 'error',
+                message: 'Invalid JSON received'
+            };
+        }
+        // Broadcast the JSON response to all connected clients
         server.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) {
-                client.send('Echo: ' + message);
+                client.send(JSON.stringify(jsonResponse));
             }
         });
     });
