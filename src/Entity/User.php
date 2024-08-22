@@ -19,26 +19,26 @@ use Symfony\Component\Serializer\Attribute\Groups;
     operations: [
         new GetCollection(),
         new Get(),
-        new Post(
-            uriTemplate: '/user_check',
-            controller: UserController::class,
-            read: false,
-            name: 'create_user'
-        ),
+        /*        new Post(
+                    uriTemplate: '/user_check',
+                    controller: UserController::class,
+                    normalizationContext: ['groups' => ['user:read']],
+                    denormalizationContext: ['groups' => ['user:write']],
+                    read: false,
+                    name: 'create_user'
+                ),*/
         new Post(),
         new Put(),
         new Patch(),
         new Delete(),
     ],
-/*    normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:write']]*/
 )]
 class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-/*    #[Groups(['user:read'])]*/
+//    #[Groups(['user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 45)]
@@ -46,11 +46,11 @@ class User
     private ?string $nom = null;
 
     #[ORM\Column(length: 45)]
-/*    #[Groups(['user:read', 'user:write'])]*/
+//    #[Groups(['user:read', 'user:write'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-/*    #[Groups(['user:read', 'user:write'])]*/
+//    #[Groups(['user:read', 'user:write'])]
     private ?string $signature = null;
 
     #[ORM\Column(nullable: true)]
@@ -61,7 +61,7 @@ class User
 
     #[ORM\ManyToOne(inversedBy: 'SessionUsers')]
     #[ORM\JoinColumn(nullable: true)]
-/*    #[Groups(['user:read', 'user:write'])]*/
+//    #[Groups(['user:read', 'user:write'])]
     private ?Session $UsersSession = null;
 
     public function getId(): ?int

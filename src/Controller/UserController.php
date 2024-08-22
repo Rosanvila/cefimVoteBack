@@ -1,5 +1,4 @@
 <?php
-// src/Controller/UserController.php
 
 namespace App\Controller;
 
@@ -18,11 +17,13 @@ class UserController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private UserRepository $userRepository;
+    private SessionRepository $sessionRepository;
 
     public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, SessionRepository $sessionRepository)
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
+        $this->sessionRepository = $sessionRepository;
     }
 
     public function __invoke(Request $request): Response
@@ -35,15 +36,25 @@ class UserController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $nom = $data['nom'] ?? null;
         $prenom = $data['prenom'] ?? null;
+        $signature = $data['signature'] ?? null;
+        $codesession = $data['codesession'] ?? null;
 
         if (!$nom || !$prenom) {
-            return new JsonResponse(['message' => 'Nom ou prénom sont requis'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['message' => 'Nom, prénom sont requis'], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!$codesession) {
+            return new JsonResponse(['message' => 'Code de session requis'], Response::HTTP_BAD_REQUEST);
         }
 
         if (strlen($nom) > 45 || strlen($prenom) > 45) {
             return new JsonResponse(['message' => 'Nom et prénom doivent être inférieurs à 45 caractères'], Response::HTTP_BAD_REQUEST);
         }
 
+        $session = $this->sessionRepository->findOneBy(['codesession' => $codesession]);
+        if (!$session) {
+            return new JsonResponse(['message' => 'Session non trouvée'], Response::HTTP_BAD_REQUEST);
+        }
 
         $user = $this->userRepository->findOneBy(['nom' => $nom, 'prenom' => $prenom]);
         if ($user) {
@@ -53,9 +64,10 @@ class UserController extends AbstractController
         $user = new User();
         $user->setNom($nom);
         $user->setPrenom($prenom);
-        $user->setSignature(null);
+        $user->setSignature($signature);
         $user->setDelegue(null);
         $user->setSuppleant(null);
+        $user->setUsersSession($session);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
