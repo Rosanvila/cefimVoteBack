@@ -37,19 +37,19 @@ class UserController extends AbstractController
         $nom = $data['nom'] ?? null;
         $prenom = $data['prenom'] ?? null;
         $signature = $data['signature'] ?? null;
-        $codesession = $data['codesession'] ?? null;
+        $usersSessionUri = $data['UsersSession'] ?? null;
 
-        if (!$nom || !$prenom) {
-            return new JsonResponse(['message' => 'Nom, prénom sont requis'], Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$codesession) {
-            return new JsonResponse(['message' => 'Code de session requis'], Response::HTTP_BAD_REQUEST);
+        if (!$nom || !$prenom || !$usersSessionUri) {
+            return new JsonResponse(['message' => 'Nom, prénom et UsersSession sont requis'], Response::HTTP_BAD_REQUEST);
         }
 
         if (strlen($nom) > 45 || strlen($prenom) > 45) {
             return new JsonResponse(['message' => 'Nom et prénom doivent être inférieurs à 45 caractères'], Response::HTTP_BAD_REQUEST);
         }
+
+        // Extract codesession from UsersSession URI
+        $uriParts = explode('/', $usersSessionUri);
+        $codesession = end($uriParts);
 
         $session = $this->sessionRepository->findOneBy(['codesession' => $codesession]);
         if (!$session) {
