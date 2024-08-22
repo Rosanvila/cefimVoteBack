@@ -1,8 +1,10 @@
 <?php
+// src/Controller/UserController.php
 
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\SessionRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,7 +19,7 @@ class UserController extends AbstractController
     private EntityManagerInterface $entityManager;
     private UserRepository $userRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository)
+    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, SessionRepository $sessionRepository)
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
@@ -35,11 +37,15 @@ class UserController extends AbstractController
         $prenom = $data['prenom'] ?? null;
 
         if (!$nom || !$prenom) {
-            return new JsonResponse(['message' => 'Nom et prénom sont requis'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['message' => 'Nom ou prénom sont requis'], Response::HTTP_BAD_REQUEST);
         }
 
-        $user = $this->userRepository->findOneBy(['nom' => $nom, 'prenom' => $prenom]);
+        if (strlen($nom) > 45 || strlen($prenom) > 45) {
+            return new JsonResponse(['message' => 'Nom et prénom doivent être inférieurs à 45 caractères'], Response::HTTP_BAD_REQUEST);
+        }
 
+
+        $user = $this->userRepository->findOneBy(['nom' => $nom, 'prenom' => $prenom]);
         if ($user) {
             return new JsonResponse(['message' => 'Utilisateur déjà existant'], Response::HTTP_CONFLICT);
         }
@@ -47,11 +53,9 @@ class UserController extends AbstractController
         $user = new User();
         $user->setNom($nom);
         $user->setPrenom($prenom);
-
-        // Set default values for other fields if necessary
         $user->setSignature(null);
-        $user->setDelegue(false);
-        $user->setSuppleant(false);
+        $user->setDelegue(null);
+        $user->setSuppleant(null);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
