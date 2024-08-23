@@ -35,7 +35,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
             denormalizationContext: ['groups' => ['user:write']]
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['HasVoted'])]
-#[ApiFilter(SearchFilter::class, properties: ['UsersSession' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['UsersSession' => 'exact', 'nom' => 'exact', 'prenom' => 'exact'])]
 class User
 {
     #[ORM\Id]
