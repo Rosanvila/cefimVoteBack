@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Delegues;
+use App\Entity\Delegue;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Delegues>
+ * @extends ServiceEntityRepository<Delegue>
  */
 class DeleguesRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Delegues::class);
+        parent::__construct($registry, Delegue::class);
     }
 
     //    /**
-    //     * @return Delegues[] Returns an array of Delegues objects
+    //     * @return Delegue[] Returns an array of Delegue objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class DeleguesRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Delegues
+    //    public function findOneBySomeField($value): ?Delegue
     //    {
     //        return $this->createQueryBuilder('d')
     //            ->andWhere('d.exampleField = :val')
