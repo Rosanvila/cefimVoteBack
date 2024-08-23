@@ -1,7 +1,12 @@
 <?php
-
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Odm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Elasticsearch\Filter\MatchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -21,20 +26,22 @@ use Symfony\Component\Serializer\Attribute\Groups;
         new Get(),
         new Post(
             controller: UserController::class,
-            normalizationContext: ['groups' => ['user:read']],
-            denormalizationContext: ['groups' => ['user:write']]
         ),
         new Put(),
         new Patch(),
         new Delete(),
     ],
+            normalizationContext: ['groups' => ['user:read']],
+            denormalizationContext: ['groups' => ['user:write']]
 )]
+#[ApiFilter(BooleanFilter::class, properties: ['HasVoted'])]
+#[ApiFilter(SearchFilter::class, properties: ['UsersSession' => 'exact'])]
 class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-//    #[Groups(['user:read'])]
+    #[Groups(['user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 45)]
@@ -59,6 +66,10 @@ class User
     #[ORM\JoinColumn(nullable: true)]
     #[Groups(['user:read', 'user:write'])]
     private ?Session $UsersSession = null;
+
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(['user:read'])]
+    private ?bool $HasVoted = null;
 
     public function getId(): ?int
     {
@@ -133,6 +144,18 @@ class User
     public function setUsersSession(?Session $UsersSession): static
     {
         $this->UsersSession = $UsersSession;
+
+        return $this;
+    }
+
+    public function getHasVoted(): ?bool
+    {
+        return $this->HasVoted;
+    }
+
+    public function setHasVoted(?bool $HasVoted): static
+    {
+        $this->HasVoted = $HasVoted;
 
         return $this;
     }

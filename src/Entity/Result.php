@@ -107,4 +107,18 @@ class Result
 
         return $this;
     }
+
+    public function getVoteCount(): int
+    {
+        return $this->ResultVotes->count();
+    }
+
+    public function getDelegates(): array
+    {
+        $delegates = [];
+        foreach ($this->ResultVotes as $vote) {
+            $delegates[] = $vote->getDeleguesVotes();
+        }
+        return $delegates;
+    }
 }
