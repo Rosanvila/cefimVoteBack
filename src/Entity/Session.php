@@ -68,10 +68,6 @@ class Session
     #[ORM\JoinColumn(nullable: true)]
     private ?Admin $SessionAdmin = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Result $SessionResult = null;
-
     /**
      * @var Collection<int, User>
      */
@@ -85,6 +81,9 @@ class Session
     #[ORM\Column(type: 'string', length: 255)]
     #[groups(['session:read', 'session:write'])]
     private ?string $signature = null;
+
+    #[ORM\OneToOne(mappedBy: 'ResultSession', cascade: ['persist', 'remove'])]
+    private ?Result $SessionResultEnd = null;
 
     public function __construct()
     {
@@ -169,18 +168,6 @@ class Session
         return $this;
     }
 
-    public function getSessionResult(): ?Result
-    {
-        return $this->SessionResult;
-    }
-
-    public function setSessionResult(Result $SessionResult): static
-    {
-        $this->SessionResult = $SessionResult;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, User>
      */
@@ -231,4 +218,25 @@ class Session
         $this->responsible = $responsible;
     }
 
+    public function getSessionResultEnd(): ?Result
+    {
+        return $this->SessionResultEnd;
+    }
+
+    public function setSessionResultEnd(?Result $SessionResultEnd): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($SessionResultEnd === null && $this->SessionResultEnd !== null) {
+            $this->SessionResultEnd->setResultSession(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($SessionResultEnd !== null && $SessionResultEnd->getResultSession() !== $this) {
+            $SessionResultEnd->setResultSession($this);
+        }
+
+        $this->SessionResultEnd = $SessionResultEnd;
+
+        return $this;
+    }
 }
