@@ -68,8 +68,8 @@ class User
     private ?Session $UsersSession = null;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(['user:read'])]
-    private ?bool $HasVoted = null;
+    #[Groups(['user:read', 'user:write'])]
+    private ?bool $HasVoted = false;
 
     public function getId(): ?int
     {
